@@ -1,0 +1,177 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+    <title>Videogame gifs</title>
+        <!--<link rel="stylesheet" href="css/styles.css?v=1.0">-->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class = 'jumbotron'>
+                <div class='text-center'> <h2>The Videogame gif Generator</h2> </div>
+        </div>
+        
+    <!--Buttons + Input Area -->    
+        <div class='container'>
+                <form class= 'form-inline'>
+                    <label for= 'vg-input' class='mb-2 mr-sm-2'> Add a videogame title </label> <br>
+                    <input type= 'text' id ='vg-input'> 
+                    <input id='add-vg' type='submit' value='Submit'>
+                </form>
+        </div>
+        
+        <br>
+
+        <div class = 'container'>   <!--Buttons go here-->
+            <div id='vg-buttons'> </div>
+        </div>
+
+    <!-- GIF space-->
+
+        <div class='container'>
+            <div id='gif-space'> </div>
+            
+        </div>
+      
+    <!---->        
+        </div>
+    </div>
+
+
+<!--=====================================SCRIPTS===========================================-->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type='text/javascript'>
+
+    // Initial array of videogame titles
+    var vg = ['evil within', 'devil may cry', 'metal gear 3', 'red dead redemption'];
+
+    // ========================= Button stuff =============================
+    
+        // Button generator function
+            function renderButtons(){
+                // Emptying buttons to prevent repeats showing up
+                $('#vg-buttons').empty();
+
+                for (var i = 0; i < vg.length; i++){
+                    
+                    var b = $('<button>');
+                        // Adding class, attributes, and providing text at index i
+                            b.addClass('vg');
+                            b.attr('data-name', vg[i]);
+                            b.text(vg[i]);        
+                        // Adding button to html
+                            $('#vg-buttons').append(b);
+                }
+            }
+
+        // Event handler for button click
+            $('#add-vg').on('click', function (event) { 
+                event.preventDefault();
+                let vgInput = $('#vg-input').val().trim();
+                vg.push(vgInput);
+                renderButtons();
+            });
+        
+        // Function call to display inital list of videogames 
+            renderButtons();
+
+    //============================ Search stuff ==================================
+        /*
+        var vgTitle = $(this).attr('data-name')
+        var queryURL='https://api.giphy.com/v1/gifs/search' + vgTitle + '&apikey=YKueXssit5vD2aNnRruhFvbIHgqn65NV&limit=10';
+
+        $.ajax({
+            url: queryURL,
+            method: 'GET'
+        })
+
+        .then(function(response) {
+            let results = response.data;
+            
+            for (var i = 0; i < response.length; i++){
+                
+                if (results [i] rating !== 'nc-17') {
+                    let gifDiv= $("<div class='item'>");
+                    let rating = results[i].rating;
+                    let p = $('<p>').text('Rating: ' + rating);
+                    let vgImage = $('<img>');
+
+                vgImage.attri('src', results[i].fixed_height.url);
+
+                }
+            }
+
+        })
+
+    //=================================================================
+
+        /* Pseudocoding
+            I & O  stuff for drafting
+                Inputs: buttons to click + input area to create/append a new button and search
+                Outputs: 10 gifs from giftastic api + ability to pause gifs
+                Process: ajax request
+                Abbreviations: vg = videogames
+
+            Button Generating (status: finished)
+                Variable to start off the array
+                    var topics = ['evil within', 'devil may cry', 'metal gear 3', 'red dead redemption']
+
+                RenderButton Function        
+                    jQuery to start and end tag
+                        var b = $('<button>');
+
+                    Dynamic button generator
+                        Assigning class, attribute, and text
+                            b.addClass('');
+                            b.attr('data-name', topics [i]);
+                            b.text(topics[i]);
+
+                        Adding button to html via append
+                            $('').append(b);
+                
+                Grabbing info from the input 
+                    $('vg-view').on('click', function (event) { 
+                        event.preventDefault
+                        let topics = $('#vg-input').val().trim;
+                        topics.push(topics);
+                    })
+                
+                
+           The Search (status: wip)
+                Variables
+                    Button-related
+                        var topics to assign button to whatever button was clicked and add its appropriate attribute
+                        var queryUrl to search for a videogame title via topics and set limits for the query (10)
+                    
+                    Ajax request
+                        var results = response.data to store array of results
+
+                    Promise variables
+                        var rating = results[i].rating 
+
+                Result manipulation
+                    loop over results 
+                    create conditions for the results
+
+            Pause + go function (status: wip)
+                Variables
+                    var state to update the attributes whenever target image is clicked
+
+                Conditionals
+                    Dependent on clicked image's state of being still or not
+                        if (state ==== still), update its source attribute to its animated state
+                        else , set the source attribute to its still value
+
+                    There is probably a way to create separate variables for still or animated, but for now I shall follow past examples just to get this to work. Experimenting will come later.
+        
+             */
+    
+    
+    </script>
+  
+</body>
+</html>
