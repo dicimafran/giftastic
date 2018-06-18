@@ -17,8 +17,8 @@
     <!--Buttons + Input Area -->    
         <div class='container'>
                 <form class= 'form-inline'>
-                    <label for= 'vg-input' class='mb-2 mr-sm-2'> Add a videogame title </label> <br>
-                    <input type= 'text' id ='vg-input'> 
+                    <label for='vg-input' class='mb-2 mr-sm-2'> Add a videogame title </label> <br>
+                    <input type='text' id ='vg-input'> 
                     <input id='add-vg' type='submit' value='Submit'>
                 </form>
         </div>
@@ -29,10 +29,10 @@
             <div id='vg-buttons'> </div>
         </div>
 
-    <!-- GIF space-->
+    <!-- GIF space, do intend to find a way to make 2 columns per card... but how?-->
+    
         <div class='container'>
-            <div id='gif-space'> </div>
-            
+            <div class='row' id='gif-space'>  </div>  
         </div>
       
     <!---->        
@@ -45,110 +45,114 @@
     <script type='text/javascript'>
 
     // Initial array of videogame titles
-    var vg = ['evil within 2', 'devil may cry', 'metal gear 3', 'red dead redemption'];
+    var vg = [ 'psychobreak', 'devil may cry', 'evil within 2', 'metal gear 3', 'red dead redemption', 'legend of zelda', 'castlevania symphony of the night'];
+    
 
     // ========================= Functions =============================
+        /* List of functions
+                Button generator
+                Display
+                Animate*/
 
         // Button generator function
             function renderButtons(){
-                // Emptying buttons to prevent repeats showing up
+                // Empties buttons to prevent repeats from showing up
                 $('#vg-buttons').empty();
 
                 for (var i = 0; i < vg.length; i++){
-                    
+                    // Button creator. Adds class, attributes, and throws the text at index [i] into the button
                     var b = $('<button>');
-                        // Adding class, attributes, and providing text at index i
-                            b.addClass('vg');
-                            b.attr('data-name', vg[i]); // The data-name is set to whatever is at the vg array at tindex i
-                            b.text(vg[i]);        
-                        // Adding button to html
-                            $('#vg-buttons').append(b);
+                        b.addClass('vg');
+                        b.attr('data-name', vg[i]); // The data-name is set to whatever is at the vg array at index [i]
+                        b.text(vg[i]); 
+                    
+                    // Adds the button (with appropriate class, attributes, and text) into the div with the id, vg-buttons.
+                    $('#vg-buttons').append(b);
                 }
             }
 
-        // display function 
-        
-
-    //============================ Events ==================================
-        // Button Generating events
-
-            // Event handler for button click
-                $('#add-vg').on('click', function (event) { 
-                        event.preventDefault();
-                        // pushing vg input into vg array
-                            var vgInput = $('#vg-input').val().trim();
-                            vg.push(vgInput);
-
-                        // handles processing of movie array
-                        renderButtons();
-                });
-            
-            // Function call to display inital list of videogames 
-                renderButtons();
-                
-        // Search events
-            // Event listener for all buttons
-            $('button').on('click', function() {
+        // display function ... Might want to shorten this more...but how?
+            function displayGIF(){
+                // Target all buttons and listen for a click. The clicked button's attribute will then be stored in the array called vg. This will be used to start a search via ajax.
+                $('button').click(function() {
 
                 let vg= $(this).attr('data-name')
                 var queryURL='https://api.giphy.com/v1/gifs/search?q=' + vg + '&api_key=YKueXssit5vD2aNnRruhFvbIHgqn65NV&limit=10';
 
-                // Ajax request
+                // Ajax request + promise. The data of the response is stored in the results variable. Conditions are set so nothing r rated is shown. gifDiv creates a div with a class of card and some sizing settings. vgImage creates an image tag. var rating stores the result item's rating which is then put into var p (it makes up the card-text.) vgImage.attr sets the src attribute and then sets the values for the image height. (giphy settings for this in their documentation)
                 $.ajax({
                     url:queryURL,
                     method:'GET'
                 }).then(function(response) {
                     var results = response.data;
                         for (var i = 0; i < results.length; i++) {
-                            var gifDiv = $("<div class='item'>");
-                            var rating = results [i].rating;
-                            var p = $('<p>').text('Rating: '+ rating);
-                            var vgImage= $('<img>');
+                            if(results[i].rating !== 'r') {
+                                var gifDiv = $("<div class='card' 'mb-2' 'col'>");
+                                var vgImage= $("<img class='card-img-top'>");
+                                var rating = results [i].rating;
+                                var p = $('<p class= card-text>').text('Rating: '+ rating);
+                           
+                       vgImage.attr({
+                           src: results[i].images.fixed_height_still.url,
+                        });
+                      
 
-                        vgImage.attr('src', results[i].images.fixed_height.url);
-                    
                         gifDiv.append(p);
                         gifDiv.append(vgImage);
-
-                        $('#gif-space').prepend(gifDiv);
-                        }
-                })
-            });
-        
-        
-
-/*      
-        // Generic button event listener
-        $('button').on('click', function() {
-            var vgTitle= $(this).attr('data-vg')
-
-                var queryURL='https://api.giphy.com/v1/gifs/search' + vgTitle + '&api_key=YKueXssit5vD2aNnRruhFvbIHgqn65NV&limit=10';
-
-                $.ajax({
-                    url: queryURL,
-                    method: 'GET'
-                }).then(function(response) {
-                    var results = response.data;
-                    
-                    for (var i = 0; i < response.length; i++){
-                        if (results [i].rating !== 'nc-17') {
-                            var gifDiv= $("<div class='item'>");
-                            let rating = results[i].rating;
-                            let p = $('<p>').text('Rating: ' + rating);
-                            let vgImage = $('<img>');
-
-                        vgImage.attri('src', results[i].fixed_height.url);
                         
-                        gifDiv.append(p);
-                        gifDiv.append(vgImage);
-
                         $('#gif-space').prepend(gifDiv);
+                        
                         }
                     }
                 })
             });
-*/
-    
+        }
+        
+        // Animate function
+        function stopGo () {
+            $('#gif-space').click(function(){
+              
+            var state = $(this).attr('data-state');
+
+            if (state === "still") {
+                $(this).attr("src", $(this).attr("data-animate"));
+                $(this).attr("data-state", "animate");
+            } else {
+                $(this).attr("src", $(this).attr("data-still"));
+                $(this).attr("data-state", "still");
+            }
+            
+            /*
+            var static= $(this).attr('src', results[i].images.fixed_height_s.url)
+            var animate= $(this).attr('src', results[i].images.fixed_height.url)
+
+            if (static=true){
+                $(this).attr(static,animate) } */
+            })
+        }
+
+    //============================ Events and calls ==================================
+ 
+            // Function call to display inital list of videogames 
+                renderButtons();
+                
+            // Event handler for button click
+                 $('#add-vg').on('click', function (event) { 
+                        event.preventDefault();
+                        // pushing vg input into vg array
+                            var vgInput = $('#vg-input').val().trim();
+                            vg.push(vgInput);
+                            console.log(vg)
+
+                        // handles processing of  array
+                        renderButtons();
+                        displayGIF();
+                           
+                });
+       
+                displayGIF();
+                stopGo();
+/*      
     //=================================================================
 
         /* Pseudocoding
@@ -183,7 +187,7 @@
                     })
                 
                 
-           The Search (status: wip)
+           The Search (status: finished)
                 Variables
                     Button-related
                         var topics to assign button to whatever button was clicked and add its appropriate attribute
@@ -195,9 +199,7 @@
                     Promise variables
                         var rating = results[i].rating 
 
-                Result manipulation
-                    loop over results 
-                    create conditions for the results
+            
 
             Pause + go function (status: wip)
                 Variables
