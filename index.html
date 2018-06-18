@@ -30,7 +30,6 @@
         </div>
 
     <!-- GIF space-->
-
         <div class='container'>
             <div id='gif-space'> </div>
             
@@ -39,18 +38,17 @@
     <!---->        
         </div>
     </div>
-
-
+    
 <!--=====================================SCRIPTS===========================================-->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type='text/javascript'>
 
     // Initial array of videogame titles
-    var vg = ['evil within', 'devil may cry', 'metal gear 3', 'red dead redemption'];
+    var vg = ['evil within 2', 'devil may cry', 'metal gear 3', 'red dead redemption'];
 
-    // ========================= Button stuff =============================
-    
+    // ========================= Functions =============================
+
         // Button generator function
             function renderButtons(){
                 // Emptying buttons to prevent repeats showing up
@@ -61,52 +59,96 @@
                     var b = $('<button>');
                         // Adding class, attributes, and providing text at index i
                             b.addClass('vg');
-                            b.attr('data-name', vg[i]);
+                            b.attr('data-name', vg[i]); // The data-name is set to whatever is at the vg array at tindex i
                             b.text(vg[i]);        
                         // Adding button to html
                             $('#vg-buttons').append(b);
                 }
             }
 
-        // Event handler for button click
-            $('#add-vg').on('click', function (event) { 
-                event.preventDefault();
-                let vgInput = $('#vg-input').val().trim();
-                vg.push(vgInput);
+        // display function 
+        
+
+    //============================ Events ==================================
+        // Button Generating events
+
+            // Event handler for button click
+                $('#add-vg').on('click', function (event) { 
+                        event.preventDefault();
+                        // pushing vg input into vg array
+                            var vgInput = $('#vg-input').val().trim();
+                            vg.push(vgInput);
+
+                        // handles processing of movie array
+                        renderButtons();
+                });
+            
+            // Function call to display inital list of videogames 
                 renderButtons();
+                
+        // Search events
+            // Event listener for all buttons
+            $('button').on('click', function() {
+
+                let vg= $(this).attr('data-name')
+                var queryURL='https://api.giphy.com/v1/gifs/search?q=' + vg + '&api_key=YKueXssit5vD2aNnRruhFvbIHgqn65NV&limit=10';
+
+                // Ajax request
+                $.ajax({
+                    url:queryURL,
+                    method:'GET'
+                }).then(function(response) {
+                    var results = response.data;
+                        for (var i = 0; i < results.length; i++) {
+                            var gifDiv = $("<div class='item'>");
+                            var rating = results [i].rating;
+                            var p = $('<p>').text('Rating: '+ rating);
+                            var vgImage= $('<img>');
+
+                        vgImage.attr('src', results[i].images.fixed_height.url);
+                    
+                        gifDiv.append(p);
+                        gifDiv.append(vgImage);
+
+                        $('#gif-space').prepend(gifDiv);
+                        }
+                })
             });
         
-        // Function call to display inital list of videogames 
-            renderButtons();
+        
 
-    //============================ Search stuff ==================================
-        /*
-        var vgTitle = $(this).attr('data-name')
-        var queryURL='https://api.giphy.com/v1/gifs/search' + vgTitle + '&apikey=YKueXssit5vD2aNnRruhFvbIHgqn65NV&limit=10';
+/*      
+        // Generic button event listener
+        $('button').on('click', function() {
+            var vgTitle= $(this).attr('data-vg')
 
-        $.ajax({
-            url: queryURL,
-            method: 'GET'
-        })
+                var queryURL='https://api.giphy.com/v1/gifs/search' + vgTitle + '&api_key=YKueXssit5vD2aNnRruhFvbIHgqn65NV&limit=10';
 
-        .then(function(response) {
-            let results = response.data;
-            
-            for (var i = 0; i < response.length; i++){
-                
-                if (results [i] rating !== 'nc-17') {
-                    let gifDiv= $("<div class='item'>");
-                    let rating = results[i].rating;
-                    let p = $('<p>').text('Rating: ' + rating);
-                    let vgImage = $('<img>');
+                $.ajax({
+                    url: queryURL,
+                    method: 'GET'
+                }).then(function(response) {
+                    var results = response.data;
+                    
+                    for (var i = 0; i < response.length; i++){
+                        if (results [i].rating !== 'nc-17') {
+                            var gifDiv= $("<div class='item'>");
+                            let rating = results[i].rating;
+                            let p = $('<p>').text('Rating: ' + rating);
+                            let vgImage = $('<img>');
 
-                vgImage.attri('src', results[i].fixed_height.url);
+                        vgImage.attri('src', results[i].fixed_height.url);
+                        
+                        gifDiv.append(p);
+                        gifDiv.append(vgImage);
 
-                }
-            }
-
-        })
-
+                        $('#gif-space').prepend(gifDiv);
+                        }
+                    }
+                })
+            });
+*/
+    
     //=================================================================
 
         /* Pseudocoding
