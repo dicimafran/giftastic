@@ -22,7 +22,7 @@
                     <input id='add-vg' type='submit' value='Submit'>
                 </form>
         </div>
-        
+
         <br>
         <!--Buttons go here-->
         <div class = 'container'>   
@@ -64,55 +64,65 @@
                         b.addClass('vg');
                         b.attr('data-name', vg[i]); // The data-name is set to whatever is at the vg array at index [i]
                         b.text(vg[i]); 
-                    
+
                     // Adds the button (with appropriate class, attributes, and text) into the div with the id, vg-buttons.
                     $('#vg-buttons').append(b);
                 }
             }
 
-        // display function ... Might want to shorten this more...but how? I think it might also be causing problems with scope.
+        // Display function
             function displayGIF(){
                 // Target all buttons and listen for a click. The clicked button's attribute will then be stored in the array called vg. This will be used to start a search via ajax.
                 $('button').click(function() {
-
-                var vg= $(this).attr('data-name')
-                var queryURL='https://api.giphy.com/v1/gifs/search?q=' + vg + '&api_key=YKueXssit5vD2aNnRruhFvbIHgqn65NV&limit=10';
-
+                    var vg= $(this).attr('data-name')
+                    var queryURL='https://api.giphy.com/v1/gifs/search?q=' + vg + '&api_key=YKueXssit5vD2aNnRruhFvbIHgqn65NV&limit=10';
 
                 // Ajax request + promise. The data of the response is stored in the results variable. Conditions are set so nothing r rated is shown. gifDiv creates a div with a class of card and some sizing settings. vgImage creates an image tag. var rating stores the result item's rating which is then put into var p (it makes up the card-text.) vgImage.attr sets the src attribute and then sets the values for the image height. (giphy settings for this in their documentation)
                 $.ajax({
                     url:queryURL,
                     method:'GET'
                 }).then(function(response) {
-                    
                     var results = response.data;
-                        for (var i = 0; i < results.length; i++) {
+                        for (var i = 0; i < results.length; i++) { 
                             if(results[i].rating !== 'r') {
-                            
-                                var gifDiv = $("<div class='card' 'mb-2' 'col'>");
+                            // Makes a card class 
+                                var gifDiv = $("<div class='card' 'mb-2' 'col-3'>");
                                 var vgImage= $("<img class='card-img-top'>");
-                                var rating = results [i].rating;
                                 var p = $('<p class= card-text>').text('Rating: '+ rating);
+                                var rating = results [i].rating;
 
-                                // Trying to make sense of the whole pause gif thing. I created variables here to hold the states of animate or static.
-                                var animate = results[i].images.fixed_height.url;
-                                var static = results[i].images.fixed_height_still.url;
-
-                                vgImage.attr('src', static);
-                                    
-                                
+                            // Adds rating and image to card, then puts it into the html
                                 gifDiv.append(p);
                                 gifDiv.append(vgImage)
                                 $('#gif-space').prepend(gifDiv);
+                                  
+                            // Pause gif to animate
+                                var animate = results[i].images.fixed_height.url;
+                                var static = results[i].images.fixed_height_still.url;
+                                
+                                vgImage.attr('src', static); // This is the default state of the image
+
+                               
+                                //  How do I switch the attributes upon a click? 
+                                                              
+                                    /*
+                                    document.querySelector('').on(click){
+                                        vgImage.attr('src', static);
+                                        vgImage.attr('data-still', static)
+
+                                        vgImage.attr('src', animate);
+                                        vgImage.attr('data-animate, still');
+                                        }
+                                    */
                         }
                     }
                 })
             });
         }
         
-        // Animate function
-        function stopGo () {
-            $('#gif-space').click(function(){
+        // Animate function- will this have to be within the scope of the display gif function?
+     /*   function stopGo () {
+            $(document).click(function(){
               
             var state = $(this).attr('data-state');                
             console.log(this)
@@ -127,7 +137,7 @@
 
             })
         }
-
+*/
     //============================ Events and calls ==================================
  
             // Function call to display inital list of videogames 
@@ -147,7 +157,7 @@
                 });
        
                 displayGIF();
-                stopGo();
+               // stopGo();
 /*      
     //=================================================================
 
