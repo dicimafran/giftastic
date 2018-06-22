@@ -1,0 +1,178 @@
+
+// Initial array of videogame titles
+    var vg = ['psychobreak', 'evil within 2', 'devil may cry', 'metal gear 3', 'red dead redemption', 'legend of zelda', 'castlevania symphony of the night'];
+
+    /* ========================= Table of Contents =============================
+            Functions
+                Button generator
+                Display
+                Animate
+            
+            Events and calls
+                On any button click: pushes input into the array then triggers functions for the button generator and gif display
+
+            Pseudocoding: 
+                The whole thought process behind all this
+                Logs progress in each section
+     =================================================================== */
+
+        // Button generator function
+            function renderButtons(){
+                // Empties buttons to prevent repeats from showing up
+                $('#vg-buttons').empty();
+
+                for (var i = 0; i < vg.length; i++){
+                    // Button creator. Adds class, attributes, and throws the text at index [i] into the button
+                    var b = $('<button>');
+                        b.addClass('vg');
+                        b.attr('data-name', vg[i]); // The data-name is set to whatever is at the vg array at index [i]
+                        b.text(vg[i]); 
+
+                    // Adds the button (with appropriate class, attributes, and text) into the div with the id, vg-buttons.
+                    $('#vg-buttons').append(b);
+                }
+            }
+
+        // Display function
+            function displayGIF(){
+                // Target all buttons and listen for a click. The clicked button's attribute will then be stored in the array called vg. This will be used to start a search via ajax.
+                $('button').click(function() {
+                    var vg= $(this).attr('data-name')
+                    var queryURL='https://api.giphy.com/v1/gifs/search?q=' + vg + '&api_key=YKueXssit5vD2aNnRruhFvbIHgqn65NV&limit=10';
+
+                // Ajax request + promise. The data of the response is stored in the results variable. Conditions are set so nothing r rated is shown. gifDiv creates a div with a class of card and some sizing settings. vgImage creates an image tag with a class of gif. var rating stores the result item's rating which is then put into var p (it makes up the card-text.) vgImage.attr sets the src attribute and then sets the values for the image height. (giphy settings for this are in their documentation)
+                $.ajax({
+                    url:queryURL,
+                    method:'GET'
+                }).then(function(response) {
+                    var results = response.data;
+                        for (var i = 0; i < results.length; i++) { 
+                            if(results[i].rating !== 'r') {
+                            // Result listings
+                                var rating = results [i].rating;
+                                var animate = results[i].images.fixed_height.url;
+                                var static = results[i].images.fixed_height_still.url;
+
+                            // Makes a card class 
+                                var gifDiv = $("<div class='card' 'col-3'>");
+                                var vgImage= $("<img class='gif'>");
+                                var p = $('<p class= card-text>').text('Rating: '+ rating);
+
+                             // Adds rating and image to card, then puts it into the html
+                                gifDiv.append(p);
+                                gifDiv.append(vgImage)
+                                $('#gif-space').prepend(gifDiv);
+
+                                vgImage.attr('src', static); // This is the default state of the image
+                                    if (vgImage.attr('src', static)=== true) {
+                                        console.log("foo")
+                                    }
+                            
+                            /* How do I do this with objects?
+                                var card= {
+                                    gifDiv: $("<div class='card' 'col-3'>"),
+                                    vgImage: $("<img class='gif'>"),
+                                    p: $('<p class= card-text>').text('Rating: '+ rating),
+                            }
+                            */
+
+                            // Pause gif to animate
+                                /*  How do I switch the attributes upon a click?         
+                                    
+                                    document.querySelector('').on(click){
+                                        vgImage.attr('src', static);
+                                        vgImage.attr('data-still', static)
+
+                                        vgImage.attr('src', animate);
+                                        vgImage.attr('data-animate, still');
+                                        }
+                                */
+                        }
+                    }
+                })
+            });
+        }
+        
+        // Animate function- will this have to be within the scope of the display gif function?
+ 
+    // ============================ Events and calls ==================================
+ 
+            // Function call to display inital list of videogames 
+                renderButtons();
+                
+            // Event handler for button click
+                 $('#add-vg').on('click', function (event) { 
+                        event.preventDefault();
+                        // pushing vg input into vg array
+                            let vgInput = $('#vg-input').val().trim();
+                            vg.push(vgInput);
+                            console.log(vg)
+
+                        // handles processing of array
+                        renderButtons();
+                        displayGIF();
+                });
+
+                displayGIF();
+               // stopGo();
+/*      
+    //=================================================================
+
+        /* Pseudocoding
+            I & O  stuff for drafting
+                Inputs: buttons to click + input area to create/append a new button and search
+                Outputs: 10 gifs from giftastic api + ability to pause gifs
+                Process: ajax request
+                Abbreviations: vg = videogames
+
+            Button Generating (status: finished)
+                Variable to start off the array
+                    var topics = ['evil within', 'devil may cry', 'metal gear 3', 'red dead redemption']
+
+                RenderButton Function        
+                    jQuery to start and end tag
+                        var b = $('<button>');
+
+                    Dynamic button generator
+                        Assigning class, attribute, and text
+                            b.addClass('');
+                            b.attr('data-name', topics [i]);
+                            b.text(topics[i]);
+
+                        Adding button to html via append
+                            $('').append(b);
+                
+                Grabbing info from the input 
+                    $('vg-view').on('click', function (event) { 
+                        event.preventDefault
+                        let topics = $('#vg-input').val().trim;
+                        topics.push(topics);
+                    })
+                
+                
+           The Search (status: finished)
+                Variables
+                    Button-related
+                        var topics to assign button to whatever button was clicked and add its appropriate attribute
+                        var queryUrl to search for a videogame title via topics and set limits for the query (10)
+                    
+                    Ajax request
+                        var results = response.data to store array of results
+
+                    Promise variables
+                        var rating = results[i].rating 
+
+            
+
+            Pause + go function (status: wip)
+                Variables
+                    var state to update the attributes whenever target image is clicked
+
+                Conditionals
+                    Dependent on clicked image's state of being still or not
+                        if (state ==== still), update its source attribute to its animated state
+                        else , set the source attribute to its still value
+
+                    There is probably a way to create separate variables for still or animated, but for now I shall follow past examples just to get this to work. Experimenting will come later.
+        
+             */
