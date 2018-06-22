@@ -1,8 +1,4 @@
-
-// Initial array of videogame titles
-    var vg = ['psychobreak', 'evil within 2', 'devil may cry', 'metal gear 3', 'red dead redemption', 'legend of zelda', 'castlevania symphony of the night'];
-
-    /* ========================= Table of Contents =============================
+/* ========================= Table of Contents =============================
             Functions
                 Button generator
                 Display
@@ -15,6 +11,11 @@
                 The whole thought process behind all this
                 Logs progress in each section
      =================================================================== */
+       
+        // Topics aka Initial array of videogame titles
+                var vg = ['psychobreak', 'evil within 2', 'devil may cry', 'metal gear 3', 'red dead redemption', 'legend of zelda', 'castlevania symphony of the night'];
+
+     //============== Functions start here ===================================
 
         // Button generator function
             function renderButtons(){
@@ -73,9 +74,8 @@
                                     gifDiv: $("<div class='card' 'col-3'>"),
                                     vgImage: $("<img class='gif'>"),
                                     p: $('<p class= card-text>').text('Rating: '+ rating),
-                            }
-                            */
-
+                                 }
+                        
                             // Pause gif to animate
                                 /*  How do I switch the attributes upon a click?         
                                     
@@ -117,7 +117,6 @@
                // stopGo();
 /*      
     //=================================================================
-
         /* Pseudocoding
             I & O  stuff for drafting
                 Inputs: buttons to click + input area to create/append a new button and search
@@ -151,7 +150,6 @@
                 
                 
            The Search (status: finished)
-                Variables
                     Button-related
                         var topics to assign button to whatever button was clicked and add its appropriate attribute
                         var queryUrl to search for a videogame title via topics and set limits for the query (10)
@@ -163,7 +161,6 @@
                         var rating = results[i].rating 
 
             
-
             Pause + go function (status: wip)
                 Variables
                     var state to update the attributes whenever target image is clicked
